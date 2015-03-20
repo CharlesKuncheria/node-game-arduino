@@ -1,5 +1,11 @@
-#divElement{
+#divBasket{
     position: absolute;
     top: 50%;
+    left: 50%;
+}
+
+#divEgg{
+    position: absolute;
+    top: 5%;
     left: 50%;
 }
