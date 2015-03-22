@@ -1,32 +1,41 @@
-var myPanel = new jsgl.Panel(document.getElementById("panel"));
-/* use myPanel's methods to draw shapes here */
-
 var socket = io();
 socket.on('pot-value', function(val){
     var horPos = (val + 1) * 100 / 1024;
     horPos += '%';
-    $('#divElement').css({top: '50%', left: horPos, position:'absolute'});
+    $('#divBasket').css({top: '50%', left: horPos, position:'absolute'});
 });
 
-var fireBullet = function(){
-    var circle = myPanel.createCircle();
-    var planeLeftPos = $('#divElement').position().left + 10;    
-    var planeTopPos = $('#divElement').position().top - 100;
+var timer = 0;
 
-    circle.setCenterLocationXY(planeLeftPos,planeTopPos);
-    circle.setRadius(10);
-    circle.getStroke().setWeight(3);
-    circle.getStroke().setColor("rgb(0,128,255)");
-    myPanel.addElement(circle);
-    
-    setTimeout(function(){
-        while(circle.getCenterY() > 10)
-        {
-            setTimeout(function(){
-                circle.setCenterY(circle.getCenterY() - 5);
-            }, 0);
-        }
-    }, 0);
+var dropEgg = function(){
+    // make a random horizontal position,
+    var randomHorPos = Math.floor((Math.random() * 100) + 1) + '%'; 
+    $('#divEgg').css({top: '5%', left: randomHorPos, position:'absolute', visibility:'visible'});
+    timer = setInterval(makeNextMove, 250);
 };
 
-$('#trigger').click(fireBullet);
+var makeNextMove = function(){
+    var nextTopPos = $('#divEgg').position().top + 5;
+    if(basketCondition($('#divEgg').position(), $('#divBasket').position()))
+    {
+        clearInterval(timer);
+        // make egg invisible.
+        $('#divEgg').css({visibility:'hidden'});
+    }
+    var leftPos = $('#divEgg').position().left;
+    $('#divEgg').css({top: nextTopPos, left: leftPos, position:'absolute'});
+};
+
+var basketCondition = function(eggPosition, basketPosition){
+    console.log(Math.abs(eggPosition.left - basketPosition.left));
+    if((eggPosition.top > basketPosition.top) && (Math.abs(eggPosition.left - basketPosition.left) < 20))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+$('#drop').click(dropEgg);
